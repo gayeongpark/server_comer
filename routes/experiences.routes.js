@@ -117,7 +117,7 @@ router.get("/", async (req, res) => {
 //   fileFilter: (req, file, callback) => {
 //     // console.log(req)
 //     // console.log('File filter:', file);
-//     // I am accpeting only png, jpg and jpeg.
+//     // I am accepting only png, jpg and jpeg.
 //     if (
 //       file.mimetype === "image/png" ||
 //       file.mimetype === "image/jpg" ||
@@ -268,7 +268,7 @@ router.post(
   }
 );
 
-// I made the update functionality each part because I want to make user update what they want only, insead of all together
+// I made the update functionality each part because I want to make user update what they want only, instead of all together
 
 // update Image
 router.put(
@@ -727,8 +727,8 @@ router.put("/:id/updatePriceCurrency", authenticateUser, async (req, res) => {
   }
 });
 
-// Update availiability
-router.put("/:id/updateAvailiability", authenticateUser, async (req, res) => {
+// Update availability
+router.put("/:id/updateAvailability", authenticateUser, async (req, res) => {
   try {
     const { id } = req.params;
     const experience = await Experience.findById(id);
@@ -841,7 +841,7 @@ router.delete("/deleteAExperience/:id", authenticateUser, async (req, res) => {
       experienceId: experience.id,
     });
     if (!availability) {
-      res.status(404).json("I cannot find the availiable slot!");
+      res.status(404).json("I cannot find the available slot!");
     }
   } catch (error) {
     res.status(500).json("Failed to delete the experience post!");
@@ -1039,19 +1039,45 @@ router.delete(
 
 // Search
 // It must be revised
-// I did not implet search request to the client
+// I did not implement search request to the client
 // It should be revised much more
-router.get("/search", async (req, res, next) => {
+router.get("/searchExperience/:cityName", async (req, res) => {
   try {
-    const { city, startDate, endDate } = req.query;
-    const experience = await Experience.find({
-      city: { $regex: city, $options: "i" },
-      startDate: { $gte: startDate },
-      endDate: { $lte: endDate },
-    }).limit(40);
-    res.status(200).json(experience);
+    const { cityName } = req.params;
+    // let query = {
+    //   city: { $regex: city, $options: "i" }, // Case-insensitive search for the city
+    // };
+
+    // Extract and validate startDate and endDate from query string
+    // const { startDate, endDate } = req.query;
+    // if (startDate || endDate) {
+    //   if (startDate && isNaN(Date.parse(startDate))) {
+    //     throw new Error("Invalid startDate");
+    //   }
+    //   if (endDate && isNaN(Date.parse(endDate))) {
+    //     throw new Error("Invalid endDate");
+    //   }
+
+    //   // If both dates are valid or present, adjust the query accordingly
+    //   if (startDate) {
+    //     query.startDate = { $gte: new Date(startDate) };
+    //   }
+    //   if (endDate) {
+    //     query.endDate = { $lte: new Date(endDate) };
+    //   }
+    // }
+
+    const experiences = await Experience.find({ city: cityName }).limit(40);
+    res.status(200).json(experiences);
   } catch (error) {
-    next(error);
+    // console.error(error); // Log the error for server-side inspection
+    // const errorMessage = error.message.includes("Invalid")
+    //   ? error.message
+    //   : "We could not find experiences based on your request. Please check your inputs and try again.";
+    res.status(500).json({
+      message:
+        "We could not find experiences based on your request. Please check your inputs and try again.",
+    });
   }
 });
 

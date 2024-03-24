@@ -79,7 +79,7 @@ router.get("/comments/:id", async (req, res, next) => {
 //       file.mimetype === "image/jpeg"
 //     ) {
 //       callback(null, true);
-//       // Accpeting the file
+//       // Accepting the file
 //     } else {
 //       callback(new Error("Only image files are allowed!"));
 //     }

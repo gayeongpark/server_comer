@@ -18,7 +18,7 @@ router.post("/signup", async (req, res) => {
     // 1. hash the password and password2(for confirming password) to store them securely in a database.
     const salt = bcrypt.genSaltSync(10);
     // salt contains a random string that is combined with the user's password before hashing.
-    // It is to add an addtional layer of security to the password hashing process.
+    // It is to add an additional layer of security to the password hashing process.
     // 10 means that bcrypt will perform 2^10 (1,024) iterations of the underlying algorithm to generate the salt.
     const hash = bcrypt.hashSync(req.body.password, salt);
     // hash contains a hashed password from req.body.password, which is the user's entered password, and a random string from previous step.
@@ -29,7 +29,7 @@ router.post("/signup", async (req, res) => {
       return res.status(400).json({ error: "Password does not match" });
     }
     const user = await User.findOne({ email });
-    // Attempt to find if there is same email value in the User data model using the email, wich is the user's entered email.
+    // Attempt to find if there is same email value in the User data model using the email, which is the user's entered email.
     if (user) {
       // check user existence.
       return res.status(404).json({ error: "User already registered." });
