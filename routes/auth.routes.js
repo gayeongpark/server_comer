@@ -58,7 +58,7 @@ router.post("/signup", async (req, res) => {
       },
     });
 
-    const url = `https://https://comer-app.onrender.com/emailVerification/${token}`;
+    const url = `https://comer-app.onrender.com/emailVerification/${token}`;
     // This is the URL for email verification with the generated token from previous step
     try {
       await transporter.sendMail({
