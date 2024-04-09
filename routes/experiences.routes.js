@@ -744,13 +744,14 @@ router.put("/:id/updateAvailability", authenticateUser, async (req, res) => {
     const { startTime, endTime, startDate, endDate } = req.body;
 
     // Custom function to parse time in "h:mm A" format to a Date object
+    // Custom function to parse time in "h:mm A" format to a Date object
     const parseTime = (timeStr) => {
-      const [hours, minutes] = timeStr.split(":");
-      const [h, m] = hours.split(" ");
-      let hours24 = parseInt(h, 10);
-      if (m === "PM" && hours24 !== 12) {
+      const [time, modifier] = timeStr.split(" ");
+      let [hours, minutes] = time.split(":");
+      let hours24 = parseInt(hours, 10);
+      if (modifier === "PM" && hours24 !== 12) {
         hours24 += 12;
-      } else if (m === "AM" && hours24 === 12) {
+      } else if (modifier === "AM" && hours24 === 12) {
         hours24 = 0;
       }
       return new Date(0, 0, 0, hours24, parseInt(minutes, 10));
@@ -814,9 +815,7 @@ router.put("/:id/updateAvailability", authenticateUser, async (req, res) => {
     res.status(200).json({ message: "Experience updated successfully" });
   } catch (error) {
     console.error(error); // Log the error for debugging
-    res
-      .status(500)
-      .json("Failed to update the language array of the experience.");
+    res.status(500).json("Failed to update the availability.");
   }
 });
 
