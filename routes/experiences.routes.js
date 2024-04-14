@@ -76,13 +76,14 @@ router.get("/profile/:id", authenticateUser, async (req, res) => {
 //get random post
 router.get("/", async (req, res) => {
   try {
+    // Create an index on the endDate field to make fast reading
+    await Experience.collection.createIndex({ endDate: 1 });
+
     // Use the MongoDB aggregation framework to query the database
-    // Aggregation operations process multiple documents and return computed results.
     const experiences = await Experience.aggregate([
       {
         // First aggregation stage: Match experiences that meet specific criteria
         $match: {
-          // startDate: { $gte: new Date() }, // Start date is greater than or equal to today
           endDate: { $gte: new Date() }, // End date is greater than or equal to today
         },
       },
@@ -93,7 +94,7 @@ router.get("/", async (req, res) => {
     res.status(200).json(experiences);
   } catch (error) {
     // If an error occurs during the process, respond with a 500 Internal Server Error status code
-    res.status(500).json({ error: "I cannot find all posts!" });
+    res.status(500).json({ error: "Failed to fetch experiences" });
   }
 });
 
