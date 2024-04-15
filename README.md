@@ -1,4 +1,4 @@
-# Server Configuration for Lantana's Project
+# Server of Comer project
 
 This document outlines the server configuration for Lantana (GaYeong)'s project.
 
@@ -102,4 +102,4 @@ node index.js
 
 ## Diagram
 
-![dataModeling](/comer_server/src/img/Comer%20data%20modeling.png)
+![dataModeling](./src/img/Comer%20data%20modeling.png)
