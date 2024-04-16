@@ -102,4 +102,4 @@ node index.js
 
 ## Diagram
 
-![dataModeling](./src/img/data%20modeling.png)
+![dataModeling](./src/img/Comer%20data%20modeling.png)
