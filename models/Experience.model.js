@@ -1,5 +1,6 @@
 const { Schema, model } = require("mongoose");
 // const User = require('./User.model');
+// const Availability = require("./Availability.model")
 
 // Create a new Mongoose Schema for the "Experience" collection in the database
 const experienceSchema = new Schema(
@@ -125,6 +126,7 @@ const experienceSchema = new Schema(
     cancellation2: {
       type: Boolean,
     },
+    // availability: [Availability.schema],
   },
   // Include timestamps for "createdAt" and "updatedAt" fields
   // This can be used later if my website is scaled much more

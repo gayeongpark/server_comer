@@ -5,6 +5,8 @@ const multerS3 = require("multer-s3");
 const { authenticateUser } = require("../middleware/authMiddleware.js");
 const User = require("../models/User.model");
 const Experience = require("../models/Experience.model");
+const Comment = require("../models/Comment.model.js");
+const Availability = require("../models/Availability.model.js");
 const router = express.Router();
 
 //get user
@@ -158,7 +160,7 @@ router.delete("/delete/:id", authenticateUser, async (req, res) => {
     const user = await User.findById(req.params.id);
 
     // Ensure that the user making the request is the same as the user being deleted.
-    if (user.id !== req.user.id) {
+    if (!user || user.id !== req.user.id) {
       return res.status(404).json({ error: "User not found." });
     }
 
@@ -170,6 +172,47 @@ router.delete("/delete/:id", authenticateUser, async (req, res) => {
       { new: true }
     );
 
+    if (!user.isActive) {
+      // Delete comments associated with the user
+      await Comment.deleteMany({ userId: user._id });
+
+      // Delete experiences associated with the user
+      await Experience.deleteMany({ userId: user._id });
+
+      // Find availability documents where the booking is associated with the user
+      const availabilities = await Availability.find({
+        "booking.userId": user._id,
+      });
+
+      if (!availabilities || availabilities.length === 0) {
+        return res.status(400).json("No availability found for user.");
+      } else {
+        for (const avail of availabilities) {
+          // Loop through each booking in the availability document
+          for (const booking of avail.booking) {
+            // If the booking is associated with the user
+            if (booking.userId === user._id) {
+              // Find the corresponding dateMaxGuestPairs by slotId
+              const pair = avail.dateMaxGuestPairs.find(
+                (pair) => pair._id === booking.slotId
+              );
+              if (pair) {
+                // Increase maxGuest count
+                pair.maxGuest++;
+              }
+              // Remove the booking from availability
+              await Availability.updateMany(
+                { "booking.userId": user._id },
+                { $pull: { booking: { userId: user._id } } }
+              );
+            }
+          }
+          // Save the updated availability document
+          await avail.save();
+        }
+      }
+    }
+
     // Clear the user's access and refresh tokens to log them out.
     res.clearCookie("accessToken");
     res.clearCookie("refreshToken");
@@ -180,6 +223,7 @@ router.delete("/delete/:id", authenticateUser, async (req, res) => {
       .json({ message: "We are deleting your account. Please hold on..." });
   } catch (error) {
     // Handle any errors by returning a 500 status and an error message.
+    console.error(error);
     res.status(500).json({ error: "Server Error!" });
   }
 });

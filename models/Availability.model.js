@@ -54,9 +54,9 @@ const availabilitySchema = new Schema(
         userId: {
           type: String,
         },
-        experienceId: {
-          type: String,
-        },
+        // experienceId: {
+        //   type: String,
+        // },
         experienceTitle: {
           type: String,
         },
