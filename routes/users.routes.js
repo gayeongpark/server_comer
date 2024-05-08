@@ -89,7 +89,7 @@ router.get("/comments/:id", async (req, res, next) => {
 // });
 
 const s3Client = new S3Client({
-  region: "eu-north-1",
+  region: process.env.AWS_S3_REGION,
   credentials: {
     accessKeyId: process.env.AWS_S3_ACCESSKEY,
     secretAccessKey: process.env.AWS_S3_SECRETKEY,
@@ -99,7 +99,7 @@ const s3Client = new S3Client({
 // Define a Multer-S3 storage engine using the S3 client from AWS SDK v3.
 const storage = multerS3({
   s3: s3Client,
-  bucket: "comer-images",
+  bucket: process.env.AWS_S3_BUCKET,
   acl: "public-read",
   key: function (req, file, cb) {
     cb(null, `${Date.now().toString()}-${file.originalname}`);
